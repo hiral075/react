@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "227447101225",
+    "firebase_url": "https://loginsignup7-a8de7-default-rtdb.firebaseio.com",
+    "project_id": "loginsignup7-a8de7",
+    "storage_bucket": "loginsignup7-a8de7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:227447101225:android:b0c19eacbf9f7957214938",
+        "android_client_info": {
+          "package_name": "com.loginsignup"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-etmSk1Di_BnS74Jo4uKWUv9zftPdME4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:227447101225:android:ffb45a48549bde87214938",
+        "android_client_info": {
+          "package_name": "com.newlogin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-etmSk1Di_BnS74Jo4uKWUv9zftPdME4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
