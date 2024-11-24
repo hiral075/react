@@ -1,0 +1,4 @@
+my_flask_api/venv/venv/Lib/site-packages/clang/native/libclang.dll filter=lfs diff=lfs merge=lfs -text
+my_flask_api/venv/crop_model.pkl filter=lfs diff=lfs merge=lfs -text
+my_flask_api/venv/models/crop_model_dl.h5 filter=lfs diff=lfs merge=lfs -text
+my_flask_api/venv/venv/Lib/site-packages/tensorflow/python/_pywrap_tensorflow_internal.pyd filter=lfs diff=lfs merge=lfs -text
