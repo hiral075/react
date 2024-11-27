@@ -6,6 +6,7 @@ import {
   Button,
   Image,
   StyleSheet,
+  ScrollView,
 } from 'react-native';
 
 const ImagePredictions = () => {
@@ -13,6 +14,7 @@ const ImagePredictions = () => {
   const [imageUrl, setImageUrl] = useState('');
   const [serverMessage, setServerMessage] = useState('');
   const [predictedImageName, setPredictedImageName] = useState('');
+  const [groundTruthName, setGroundTruthName] = useState('');
 
   const loadImage = () => {
     if (imageName.trim() === '') {
@@ -20,12 +22,12 @@ const ImagePredictions = () => {
       return;
     }
 
-    setImageUrl(`http://192.168.29.249:3000/assests/${imageName}`);
+    setImageUrl(`http://192.168.201.13:3000/assests/${imageName}`);
   };
 
   const testServerConnection = async () => {
     try {
-      const response = await fetch('http://192.168.29.249:3000/test');
+      const response = await fetch('http://192.168.201.13:3000/test');
       const message = await response.text();
       setServerMessage(message);
     } catch (error) {
@@ -36,8 +38,7 @@ const ImagePredictions = () => {
 
   const predictImageName = async () => {
     try {
-      // Assuming the server expects some input for prediction (e.g., the current image name)
-      const response = await fetch('http://192.168.29.249:3000/predict', {
+      const response = await fetch('http://192.168.201.13:3000/predict', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -50,15 +51,37 @@ const ImagePredictions = () => {
       }
 
       const data = await response.json();
-      setPredictedImageName(data.predictedName); // Server should return a key named "predictedName"
+      setPredictedImageName(data.predictedName);
     } catch (error) {
       console.error('Error predicting image name:', error);
       setPredictedImageName('Prediction failed!');
     }
   };
 
+  const fetchGroundTruth = async () => {
+    try {
+      const response = await fetch('http://192.168.201.13:3000/groundTruth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ currentImageName: imageName }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch ground truth');
+      }
+
+      const data = await response.json();
+      setGroundTruthName(data.groundTruthName);
+    } catch (error) {
+      console.error('Error fetching ground truth:', error);
+      setGroundTruthName('Ground truth unavailable!');
+    }
+  };
+
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Image Viewer</Text>
 
       <Button title="Test Server" onPress={testServerConnection} />
@@ -84,17 +107,21 @@ const ImagePredictions = () => {
       )}
 
       <Button title="Predict Image Name" onPress={predictImageName} />
+      <Button title="Fetch Ground Truth" onPress={fetchGroundTruth} />
 
       {predictedImageName ? (
         <Text style={styles.prediction}>Predicted Name: {predictedImageName}</Text>
       ) : null}
-    </View>
+      {groundTruthName ? (
+        <Text style={styles.result}>Ground Truth Name: {groundTruthName}</Text>
+      ) : null}
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
@@ -137,6 +164,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: 'green',
+  },
+  result: {
+    marginTop: 10,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'orange',
   },
 });
 
