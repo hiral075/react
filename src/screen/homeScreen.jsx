@@ -34,7 +34,7 @@ const HomeScreen = () => {
     setAccuracy(null);
 
     try {
-      const response = await axios.post('http://192.168.29.249:5000/predict_rainfall', {
+      const response = await axios.post('http://192.168.36.13:5000/predict_rainfall', {
         data: [[year, state]]
       });
 
@@ -53,7 +53,7 @@ const HomeScreen = () => {
     setAccuracy(null);
 
     try {
-      const response = await axios.post('http://192.168.29.249:5000/predict_yield', {
+      const response = await axios.post('http://192.168.36.13:5000/predict_yield', {
         data: [[year, state, season, area, rainfall, fertilizer]]
       });
 
@@ -72,7 +72,7 @@ const HomeScreen = () => {
     setCropRecommendation(null);
 
     try {
-      const response = await axios.post('http://192.168.29.249:5000/recommend_crop', {
+      const response = await axios.post('http://192.168.36.13:5000/recommend_crop', {
         data: [[year, state, season, area, rainfall, fertilizer]]
       });
 
