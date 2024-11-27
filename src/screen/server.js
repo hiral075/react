@@ -6,7 +6,7 @@ const app = express();
 
 app.use(bodyParser.json());
 
-// Serve static files from the "assests" folder
+// Serve static files from the "assets" folder
 app.use('/assests', express.static(path.join(__dirname, 'assests')));
 
 // Test route
@@ -22,14 +22,67 @@ app.post('/predict', (req, res) => {
     return res.status(400).json({ error: 'Image name is required' });
   }
 
-  const baseName = currentImageName.split('.')[0].replace(/\d+/g, '');
-  res.json({ predictedName: baseName });
+  // Extract base name from the image name, removing digits and file extension
+  const baseName = currentImageName.split('.')[0].replace(/\d+$/, ''); // Remove digits at the end
+  const predictedName = baseName; // Use the extracted base name directly for prediction
+
+  res.json({ predictedName });
 });
 
+// Ground Truth route
+app.post('/groundTruth', (req, res) => {
+  const { currentImageName } = req.body;
+
+  if (!currentImageName) {
+    return res.status(400).json({ error: 'Image name is required' });
+  }
+
+  // Extract base name from the image name, removing digits and file extension
+  const baseName = currentImageName.split('.')[0].replace(/\d+$/, ''); // Remove digits at the end
+  const groundTruthName = baseName; // Use the extracted base name directly for ground truth
+
+  res.json({ groundTruthName });
+});
+
+// Server setup
 const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+
+
+// const express = require('express');
+// const path = require('path');
+// const bodyParser = require('body-parser');
+
+// const app = express();
+
+// app.use(bodyParser.json());
+
+// // Serve static files from the "assests" folder
+// app.use('/assests', express.static(path.join(__dirname, 'assests')));
+
+// // Test route
+// app.get('/test', (req, res) => {
+//   res.send('Server is running!');
+// });
+
+// // Prediction route
+// app.post('/predict', (req, res) => {
+//   const { currentImageName } = req.body;
+
+//   if (!currentImageName) {
+//     return res.status(400).json({ error: 'Image name is required' });
+//   }
+
+//   const baseName = currentImageName.split('.')[0].replace(/\d+/g, '');
+//   res.json({ predictedName: baseName });
+// });
+
+// const PORT = 3000;
+// app.listen(PORT, () => {
+//   console.log(`Server running on http://localhost:${PORT}`);
+// });
 
 
 // const express = require('express');
