@@ -10,6 +10,7 @@ crop_model = CropModel(data_path='crop.csv')
 
 app = Flask(__name__)
 
+
 # Utility function to check if a value is numeric
 def is_number(value):
     try:
