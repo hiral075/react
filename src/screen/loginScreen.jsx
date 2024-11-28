@@ -37,7 +37,7 @@ const LoginScreen = () => {
   };
 
   const handleRegister = () => {
-    navigation.navigate('MLandDL'); // Navigate to MLandDLScreen for registration
+    navigation.navigate('Signup'); // Navigate to MLandDLScreen for registration
   };
 
   return (
