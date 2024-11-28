@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import axios from 'axios';
 import { Picker } from '@react-native-picker/picker';
 
@@ -67,7 +67,6 @@ const HomeScreen = () => {
   };
 
   const handleCropRecommendation = async () => {
-
     setError(null);
     setCropRecommendation(null);
 
@@ -88,9 +87,15 @@ const HomeScreen = () => {
     return (
       <View style={styles.container}>
         <Text style={styles.title}>Choose Prediction</Text>
-        <Button title="Rainfall Prediction" onPress={() => setSelectedPrediction('rainfall')} />
-        <Button title="Yield Prediction" onPress={() => setSelectedPrediction('yield')} />
-        <Button title="Crop Recommendation" onPress={() => setSelectedPrediction('crop')} />
+        <TouchableOpacity style={styles.button} onPress={() => setSelectedPrediction('rainfall')}>
+          <Text style={styles.buttonText}>Rainfall Prediction</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => setSelectedPrediction('yield')}>
+          <Text style={styles.buttonText}>Yield Prediction</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => setSelectedPrediction('crop')}>
+          <Text style={styles.buttonText}>Crop Recommendation</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -163,36 +168,41 @@ const HomeScreen = () => {
         </>
       )}
       {selectedPrediction === 'crop' && (
-  <>
-    <TextInput
-      style={styles.input}
-      placeholder="Enter Annual Rainfall"
-      onChangeText={setRainfall}
-      value={rainfall}
-      keyboardType="numeric"
-    />
+        <>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter Annual Rainfall"
+            onChangeText={setRainfall}
+            value={rainfall}
+            keyboardType="numeric"
+          />
 
-    <TextInput
-      style={styles.input}
-      placeholder="Enter Fertilizer Used"
-      onChangeText={setFertilizer}
-      value={fertilizer}
-      keyboardType="numeric"
-    />
-  </>
-)}
-
+          <TextInput
+            style={styles.input}
+            placeholder="Enter Fertilizer Used"
+            onChangeText={setFertilizer}
+            value={fertilizer}
+            keyboardType="numeric"
+          />
+        </>
+      )}
 
       {selectedPrediction === 'rainfall' && (
-        <Button title="Predict Rainfall" onPress={handleRainfallPrediction} />
+        <TouchableOpacity style={styles.button} onPress={handleRainfallPrediction}>
+          <Text style={styles.buttonText}>Predict Rainfall</Text>
+        </TouchableOpacity>
       )}
 
       {selectedPrediction === 'yield' && (
-        <Button title="Predict Yield" onPress={handleYieldPrediction} />
+        <TouchableOpacity style={styles.button} onPress={handleYieldPrediction}>
+          <Text style={styles.buttonText}>Predict Yield</Text>
+        </TouchableOpacity>
       )}
 
       {selectedPrediction === 'crop' && (
-        <Button title="Get Crop Recommendation" onPress={handleCropRecommendation} />
+        <TouchableOpacity style={styles.button} onPress={handleCropRecommendation}>
+          <Text style={styles.buttonText}>Get Crop Recommendation</Text>
+        </TouchableOpacity>
       )}
 
       {error && <Text style={styles.error}>Error: {error}</Text>}
@@ -213,7 +223,9 @@ const HomeScreen = () => {
         <Text style={styles.result}>Model Accuracy (R²): {accuracy}</Text>
       )}
 
-      <Button title="Go Back" onPress={() => setSelectedPrediction(null)} />
+      <TouchableOpacity style={styles.button} onPress={() => setSelectedPrediction(null)}>
+        <Text style={styles.buttonText}>Go Back</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -232,7 +244,7 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    color:'green',
+    color: 'green',
     borderColor: '#ccc',
     borderRadius: 5,
     padding: 10,
@@ -256,6 +268,18 @@ const styles = StyleSheet.create({
     color: 'red',
     marginTop: 20,
     fontSize: 16,
+  },
+  button: {
+    backgroundColor: '#000000', // Black color for the button
+    padding: 15,
+    borderRadius: 25, // Oval shape
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  buttonText: {
+    color: '#FFFFFF', // White text for better contrast on black background
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 
