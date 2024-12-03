@@ -1,176 +1,88 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  Button,
-  Image,
-  StyleSheet,
-  ScrollView,
-} from 'react-native';
+import { View, Text, TextInput, Button, Image, StyleSheet, ScrollView } from 'react-native';
+import axios from 'axios';
 
-const ImagePredictions = () => {
+const ImagePredictionScreen = () => {
+  const [folder, setFolder] = useState('');
+  const [subfolder, setSubfolder] = useState('');
   const [imageName, setImageName] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
-  const [serverMessage, setServerMessage] = useState('');
+  const [imagePath, setImagePath] = useState(null);
   const [predictedImageName, setPredictedImageName] = useState('');
-  const [groundTruthName, setGroundTruthName] = useState('');
+  const [groundTruthImageName, setGroundTruthImageName] = useState('');
 
-  const loadImage = () => {
-    if (imageName.trim() === '') {
-      alert('Please enter an image name!');
-      return;
-    }
+  const handleLoadImage = () => {
+    // Construct the dynamic path as a URI
+    const imageUri = `http://192.168.165.13:3000/assests/${folder}/${subfolder}/${imageName}`;
 
-    setImageUrl(`http://192.168.201.13:3000/assests/${imageName}`);
+    // Test if the image path is valid by setting it (assume server serves images correctly)
+    setImagePath({ uri: imageUri });
   };
 
-  const testServerConnection = async () => {
+  const handlePredictImage = async () => {
     try {
-      const response = await fetch('http://192.168.201.13:3000/test');
-      const message = await response.text();
-      setServerMessage(message);
-    } catch (error) {
-      setServerMessage('Failed to connect to the server!');
-      console.error('Error connecting to the server:', error);
-    }
-  };
-
-  const predictImageName = async () => {
-    try {
-      const response = await fetch('http://192.168.201.13:3000/predict', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ currentImageName: imageName }),
+      const response = await axios.post('http://192.168.165.13:3000/predict', {
+        currentImageName: imageName,
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch prediction');
-      }
-
-      const data = await response.json();
-      setPredictedImageName(data.predictedName);
+      setPredictedImageName(response.data.predictedName);
     } catch (error) {
-      console.error('Error predicting image name:', error);
-      setPredictedImageName('Prediction failed!');
+      console.error('Prediction error:', error);
     }
   };
 
-  const fetchGroundTruth = async () => {
+  const handleGroundTruth = async () => {
     try {
-      const response = await fetch('http://192.168.201.13:3000/groundTruth', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ currentImageName: imageName }),
+      const response = await axios.post('http://192.168.165.13:3000/groundTruth', {
+        currentImageName: imageName,
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch ground truth');
-      }
-
-      const data = await response.json();
-      setGroundTruthName(data.groundTruthName);
+      setGroundTruthImageName(response.data.groundTruthName);
     } catch (error) {
-      console.error('Error fetching ground truth:', error);
-      setGroundTruthName('Ground truth unavailable!');
+      console.error('Ground truth error:', error);
     }
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Image Viewer</Text>
-
-      <Button title="Test Server" onPress={testServerConnection} />
-      {serverMessage ? <Text style={styles.serverMessage}>{serverMessage}</Text> : null}
-
+      <Text style={styles.label}>Enter Folder Name:</Text>
       <TextInput
         style={styles.input}
-        placeholder="Enter image name (e.g., image1.jpg)"
+        value={folder}
+        onChangeText={setFolder}
+        placeholder="e.g., folder1"
+      />
+      <Text style={styles.label}>Enter Subfolder Name:</Text>
+      <TextInput
+        style={styles.input}
+        value={subfolder}
+        onChangeText={setSubfolder}
+        placeholder="e.g., subfolder1"
+      />
+      <Text style={styles.label}>Enter Image Name (with extension):</Text>
+      <TextInput
+        style={styles.input}
         value={imageName}
         onChangeText={setImageName}
+        placeholder="e.g., image1.png"
       />
-
-      <Button title="Load Image" onPress={loadImage} />
-
-      {imageUrl ? (
-        <Image
-          source={{ uri: imageUrl }}
-          style={styles.image}
-          resizeMode="contain"
-        />
-      ) : (
-        <Text style={styles.placeholder}>No image loaded</Text>
+      <Button title="Load Image" onPress={handleLoadImage} />
+      <Button title="Predict Image Name" onPress={handlePredictImage} />
+      <Button title="Get Ground Truth" onPress={handleGroundTruth} />
+      {imagePath && <Image source={imagePath} style={styles.image} />}
+      {predictedImageName && (
+        <Text style={styles.resultText}>Predicted Image Name: {predictedImageName}</Text>
       )}
-
-      <Button title="Predict Image Name" onPress={predictImageName} />
-      <Button title="Fetch Ground Truth" onPress={fetchGroundTruth} />
-
-      {predictedImageName ? (
-        <Text style={styles.prediction}>Predicted Name: {predictedImageName}</Text>
-      ) : null}
-      {groundTruthName ? (
-        <Text style={styles.result}>Ground Truth Name: {groundTruthName}</Text>
-      ) : null}
+      {groundTruthImageName && (
+        <Text style={styles.resultText}>Ground Truth Image Name: {groundTruthImageName}</Text>
+      )}
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#f0f0f0',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  serverMessage: {
-    fontSize: 16,
-    color: 'blue',
-    marginVertical: 10,
-  },
-  input: {
-    width: '80%',
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    marginBottom: 20,
-    backgroundColor: '#fff',
-  },
-  image: {
-    width: 300,
-    height: 300,
-    marginTop: 20,
-    borderWidth: 1,
-    borderColor: '#ddd',
-  },
-  placeholder: {
-    marginTop: 20,
-    fontSize: 16,
-    color: 'gray',
-  },
-  prediction: {
-    marginTop: 20,
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: 'green',
-  },
-  result: {
-    marginTop: 10,
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: 'orange',
-  },
+  container: { flexGrow: 1, padding: 20 },
+  label: { fontSize: 16, marginVertical: 5 },
+  input: { borderWidth: 1, borderColor: '#ccc', padding: 10, marginBottom: 10 },
+  image: { width: 200, height: 200, marginTop: 20 },
+  resultText: { fontSize: 18, marginTop: 10, color: 'green' },
 });
 
-export default ImagePredictions;
+export default ImagePredictionScreen;
