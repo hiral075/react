@@ -10,7 +10,7 @@ const MLandDLScreen = () => {
   };
 
   const navigateToDL = () => {
-    navigation.navigate('ImagePredictions');
+    navigation.navigate('DL');
   };
 
   return (
